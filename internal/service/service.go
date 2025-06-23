@@ -1,26 +1,28 @@
 package service
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/Yandex-Practicum/go1fl-sprint6-final/pkg/morse"
 )
 
 func MorseOrText(s string) string {
-	foundMorse := false
+	foundtext := false
 
-	for _, value := range morse.DefaultMorse {
-		if strings.ContainsAny(s, value) {
-			foundMorse = true
+	for key, _ := range morse.DefaultMorse {
+		if strings.ContainsAny(strings.ToUpper(s), string(key)) && (string(key) != "." && string(key) != "-") {
+			foundtext = true
 			break
 		}
 	}
-	if foundMorse {
+	if foundtext {
 		// fmt.Print(morse.ToMorse(s))
-		return morse.ToText(s)
+		return morse.ToMorse(s)
 
 	}
 	// fmt.Print(morse.ToText(s))
-	return morse.ToMorse(s)
+	fmt.Print(foundtext)
+	return morse.ToText(s)
 
 }

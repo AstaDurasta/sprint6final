@@ -11,16 +11,20 @@ import (
 )
 
 func MainHandler(res http.ResponseWriter, req *http.Request) {
-	HTML, err := os.ReadFile("index.html")
+	html, err := os.ReadFile("index.html")
 	if err != nil {
-		fmt.Fprint(res, http.StatusInternalServerError)
+		http.Error(res, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	res.Write(HTML)
+	res.Write(html)
 }
 
 func UploadHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		w.Write([]byte("поступил get запрос"))
+		return
+	}
 	r.ParseMultipartForm(10 << 20)
 
 	file, handler, err := r.FormFile("myFile")
