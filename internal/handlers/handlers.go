@@ -11,25 +11,30 @@ import (
 )
 
 func MainHandler(res http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodGet {
+		res.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
 	html, err := os.ReadFile("index.html")
 	if err != nil {
 		http.Error(res, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	res.Write(html)
+	_, _ = res.Write(html)
+
 }
 
 func UploadHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet {
-		w.Write([]byte("поступил get запрос"))
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
 	r.ParseMultipartForm(10 << 20)
 
 	file, handler, err := r.FormFile("myFile")
 	if err != nil {
-		fmt.Println(w, "ошибка при получении файла", http.StatusBadRequest)
+		http.Error(w, "ошибка при получении файла", http.StatusBadRequest)
 		return
 	}
 
@@ -56,5 +61,5 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "ошибка при записи файла", http.StatusInternalServerError)
 		return
 	}
-	w.Write([]byte(newText))
+	_, _ = w.Write([]byte(newText))
 }
